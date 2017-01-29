@@ -1,4 +1,4 @@
-configure :development do
+configure :development, :test do
   set :database, 'sqlite3:///dev.sqlite3'
   set :show_exceptions, true
 end

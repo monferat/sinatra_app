@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby "2.2.6"
+ruby "2.3.1"
 
 gem "sinatra"
 gem "activerecord"
@@ -14,4 +14,9 @@ end
 
 group :production do
   gem 'pg'
+end
+
+group :test do
+  gem 'rspec'
+  gem 'rack-test'
 end

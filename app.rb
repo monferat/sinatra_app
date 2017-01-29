@@ -6,19 +6,18 @@ require './models/post'
 require './config/environment'
 
 get '/' do
-  'Hello World from Sinatra!'
+  redirect to '/users'
 end
 
 # Get the all users
-get '/users' do
+get '/users.?:format?' do
   @users = User.all
-  erb :"users/index"
-end
-
-get '/users.json' do
-  @users = User.all
-  content_type :json
-  @users.to_json
+  if params[:format] == 'json'
+    content_type :json
+    @users.to_json
+  else
+    erb :"users/index"
+  end
 end
 
 get '/users/:id.?:format?' do
@@ -39,6 +38,7 @@ end
 
 post "/users" do
   @user = User.new(params[:user])
+  @user.name = params[:name]
   if @user.save
     redirect "/users/#{@user.id}"
   else
@@ -47,15 +47,14 @@ post "/users" do
 end
 
 # Get all posts
-get '/posts' do
+get '/posts.?:format?' do
   @posts = Post.all
-  erb :'posts/index'
-end
-
-get '/posts.json' do
-  @posts = Post.all
-  content_type :json
-  @posts.to_json
+  if params[:format] == 'json'
+    content_type :json
+    @posts.to_json
+  else
+    erb :'posts/index'
+  end
 end
 
 get '/users/:user_id/posts' do
@@ -105,4 +104,25 @@ put '/posts/:id' do
   else
     erb :"posts/edit"
   end
+end
+
+# delete post
+get '/posts/:id/delete' do
+  @post = Post.find(params[:id])
+  erb :'posts/delete'
+end
+
+delete '/posts/:id' do
+  Post.find(params[:id]).destroy
+  redirect to '/posts'
+end
+
+not_found do
+  @title = 'Page not found'
+  erb :'404'
+end
+
+error do
+  @error = request.env['sinatra_error'].name
+  erb :'500'
 end
